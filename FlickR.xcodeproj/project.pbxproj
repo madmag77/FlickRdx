@@ -23,6 +23,7 @@
 		EB1E9CB3222A677400F6A31F /* PhotosSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CB2222A677400F6A31F /* PhotosSection.swift */; };
 		EB1E9CB5222A6BE700F6A31F /* PhotosViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CB4222A6BE700F6A31F /* PhotosViewBuilder.swift */; };
 		EB1E9CB7222A80C400F6A31F /* PhotosViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CB6222A80C400F6A31F /* PhotosViewModelTests.swift */; };
+		EB1E9CB9222A89AB00F6A31F /* PhotosStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CB8222A89AB00F6A31F /* PhotosStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		EB1E9CB2222A677400F6A31F /* PhotosSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosSection.swift; sourceTree = "<group>"; };
 		EB1E9CB4222A6BE700F6A31F /* PhotosViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewBuilder.swift; sourceTree = "<group>"; };
 		EB1E9CB6222A80C400F6A31F /* PhotosViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModelTests.swift; sourceTree = "<group>"; };
+		EB1E9CB8222A89AB00F6A31F /* PhotosStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosStore.swift; sourceTree = "<group>"; };
 		F92CD3C3E609DA60128CDE70 /* Pods-FlickR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlickR.release.xcconfig"; path = "Pods/Target Support Files/Pods-FlickR/Pods-FlickR.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,12 +127,12 @@
 		EB1E9C81222A50C600F6A31F /* FlickR */ = {
 			isa = PBXGroup;
 			children = (
+				EB1E9CBA222A89B600F6A31F /* Common */,
 				EB1E9CA5222A5F6A00F6A31F /* PhotosList */,
 				EB1E9C82222A50C600F6A31F /* AppDelegate.swift */,
 				EB1E9CAB222A63E400F6A31F /* Misc */,
 				EB1E9C89222A50C600F6A31F /* FlickR.xcdatamodeld */,
-				EB1E9CAC222A641200F6A31F /* Localisation.swift */,
-				EB1E9CB0222A66D900F6A31F /* PhotosState.swift */,
+				EB1E9CBB222A89D000F6A31F /* Store */,
 			);
 			path = FlickR;
 			sourceTree = "<group>";
@@ -166,6 +168,23 @@
 				EB1E9C91222A50C800F6A31F /* Info.plist */,
 			);
 			name = Misc;
+			sourceTree = "<group>";
+		};
+		EB1E9CBA222A89B600F6A31F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				EB1E9CAC222A641200F6A31F /* Localisation.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		EB1E9CBB222A89D000F6A31F /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				EB1E9CB0222A66D900F6A31F /* PhotosState.swift */,
+				EB1E9CB8222A89AB00F6A31F /* PhotosStore.swift */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -377,6 +396,7 @@
 			files = (
 				EB1E9CA7222A5F8F00F6A31F /* PhotoCell.swift in Sources */,
 				EB1E9C8B222A50C600F6A31F /* FlickR.xcdatamodeld in Sources */,
+				EB1E9CB9222A89AB00F6A31F /* PhotosStore.swift in Sources */,
 				EB1E9CB3222A677400F6A31F /* PhotosSection.swift in Sources */,
 				EB1E9CB1222A66DA00F6A31F /* PhotosState.swift in Sources */,
 				EB1E9CAD222A641200F6A31F /* Localisation.swift in Sources */,

@@ -8,8 +8,12 @@
 
 import Foundation
 
+struct MainState {
+    var photoState: PhotosState
+}
+
 struct PhotosState {
-    var items: [Photo]    
+    var items: [Photo]
 }
 
 struct Photo {

@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxDataSources
+import ReSwift
 
 protocol ConfigurablePhotoCell {
     func configure(title: String, photo: UIImage?)
@@ -16,14 +17,22 @@ protocol ConfigurablePhotoCell {
 
 final class PhotoViewModel {
     private var dataSource: RxCollectionViewSectionedReloadDataSource<PhotosState>?
-    var photos = Variable<[PhotosState]>([PhotosState(items: [
-        Photo(title: "111", imageName: "sss"),
-        Photo(title: "222", imageName: "sss"),
-        Photo(title: "333", imageName: "sss"),
-        Photo(title: "4444", imageName: "sss"),
-        Photo(title: "5555", imageName: "sss"),
-        ])])
+    private var store: Store<MainState>?
+   
+    var photos = Variable<[PhotosState]>([PhotosState(items: [])])
+
+    init(store: Store<MainState>?) {
+        self.store = store
+        self.store?.subscribe(self) { subcription in
+            return subcription.select { state in
+                return state.photoState
+            }
+        }
+    }
     
+    deinit {
+        store?.unsubscribe(self)
+    }
     
     func getDataSource(photoCellDequeClosure: @escaping (IndexPath) -> (UICollectionViewCell?)) -> RxCollectionViewSectionedReloadDataSource<PhotosState> {
         
@@ -47,5 +56,11 @@ final class PhotoViewModel {
         })
         
         return dataSource!
+    }
+}
+
+extension PhotoViewModel: StoreSubscriber {
+    func newState(state: PhotosState) {
+        self.photos.value = [state]
     }
 }

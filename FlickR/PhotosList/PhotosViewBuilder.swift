@@ -11,7 +11,7 @@ import UIKit
 struct PhotosViewBuilder {
     func build() -> UIViewController {
         
-        let viewModel = PhotoViewModel()
+        let viewModel = PhotoViewModel(store: photosStore)
         let view = PhotosViewController()
         view.viewModel = viewModel
         

@@ -18,7 +18,7 @@ class PhotosViewModelTests: XCTestCase {
     let anotherTestPhoto = Photo(title: "anotherTestPhoto", imageName: "ggg")
 
     override func setUp() {
-        viewModel = PhotoViewModel()
+        viewModel = PhotoViewModel(store: nil)
         viewModel.photos = Variable<[PhotosState]>([PhotosState(items: [
             testPhoto
             ])])
