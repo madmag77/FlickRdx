@@ -8,7 +8,12 @@
 
 import Foundation
 
+let defaultSearchString = "kittens"
+
 struct MainState {
+    var loading: Bool
+    var serverPageNum: Int
+    var searchString: String
     var photoState: PhotosState
 }
 
@@ -17,6 +22,10 @@ struct PhotosState {
 }
 
 struct Photo {
+    let id: String
+    let farm: Int
+    let server: String
+    let secret: String
     let title: String
-    let imageName: String
+    let photoLoaded: Bool
 }

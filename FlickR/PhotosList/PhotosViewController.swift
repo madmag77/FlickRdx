@@ -30,7 +30,7 @@ final class PhotosViewController: UIViewController {
         photoCollectionView.backgroundColor = .white
         
         // Bind collection view to viewModels dataSource
-        viewModel.photos.asObservable()
+        viewModel.photos
             .bind(to: photoCollectionView.rx.items(dataSource: viewModel.getDataSource(photoCellDequeClosure: { [weak self] ip in
                 return self?.photoCollectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.reusableIdentifier, for: ip)
             })))

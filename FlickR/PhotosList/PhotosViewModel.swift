@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import RxDataSources
 import ReSwift
+import RxCocoa
 
 protocol ConfigurablePhotoCell {
     func configure(title: String, photo: UIImage?)
@@ -18,8 +19,8 @@ protocol ConfigurablePhotoCell {
 final class PhotoViewModel {
     private var dataSource: RxCollectionViewSectionedReloadDataSource<PhotosState>?
     private var store: Store<MainState>?
-   
-    var photos = Variable<[PhotosState]>([PhotosState(items: [])])
+    
+    var photos = BehaviorRelay<[PhotosState]>(value: [PhotosState(items: [])])
 
     init(store: Store<MainState>?) {
         self.store = store
@@ -52,6 +53,10 @@ final class PhotoViewModel {
                     photo: nil // TODO: add getting image from cache
                 )
                 
+                if ip.item == ds[ip.section].items.count - 1 {
+                    self.store?.dispatch(NextSearchImagesAction())
+                }
+                
                 return cell
         })
         
@@ -61,6 +66,8 @@ final class PhotoViewModel {
 
 extension PhotoViewModel: StoreSubscriber {
     func newState(state: PhotosState) {
-        self.photos.value = [state]
+         DispatchQueue.main.async {
+            self.photos.accept([state])
+        }
     }
 }
