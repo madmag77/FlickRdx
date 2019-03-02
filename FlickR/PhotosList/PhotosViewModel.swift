@@ -50,7 +50,7 @@ final class PhotoViewModel {
                 
                 cellToConfigure.configure(
                     title: ds[ip.section].items[ip.item].title,
-                    photo: nil // TODO: add getting image from cache
+                    photo: PhotoCacheInMemory.sharedInstance.photo(for: item.uniqId)()
                 )
                 
                 if ip.item == ds[ip.section].items.count - 1 {

@@ -29,3 +29,9 @@ struct Photo {
     let title: String
     let photoLoaded: Bool
 }
+
+extension Photo {
+    var uniqId: String {
+        return "\(id)_\(farm)_\(server)_\(secret)"
+    }
+}

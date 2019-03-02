@@ -42,6 +42,13 @@ func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _
                 imageDownloadService.downloadPhoto(for: downloadAction.photo)
                 break
                 
+            case let newPhotosAction as NewPhotosAction:
+                newPhotosAction.photos.forEach({ photo in
+                    imageDownloadService.downloadPhoto(for: photo)
+                })
+                nextDispatch(action)
+                break
+
             default:
                 nextDispatch(action)
             }

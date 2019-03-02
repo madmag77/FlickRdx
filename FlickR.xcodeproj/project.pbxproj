@@ -29,6 +29,7 @@
 		EB1E9CC2222A940900F6A31F /* PhotoDownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CC1222A940900F6A31F /* PhotoDownloadService.swift */; };
 		EB1E9CC4222AAC4500F6A31F /* UrlBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CC3222AAC4500F6A31F /* UrlBuilder.swift */; };
 		EB1E9CC6222ABEFB00F6A31F /* PhotoStoreMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CC5222ABEFB00F6A31F /* PhotoStoreMiddleware.swift */; };
+		EB1E9CC8222AC11000F6A31F /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CC7222AC11000F6A31F /* ImageCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		EB1E9CC1222A940900F6A31F /* PhotoDownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhotoDownloadService.swift; path = ../../../Samples/Assignments/FlickrPhotoViewer/FlickrPhotoViewer/Providers/PhotoProvider/PhotoDownloadService.swift; sourceTree = "<group>"; };
 		EB1E9CC3222AAC4500F6A31F /* UrlBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlBuilder.swift; sourceTree = "<group>"; };
 		EB1E9CC5222ABEFB00F6A31F /* PhotoStoreMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStoreMiddleware.swift; sourceTree = "<group>"; };
+		EB1E9CC7222AC11000F6A31F /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		F92CD3C3E609DA60128CDE70 /* Pods-FlickR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlickR.release.xcconfig"; path = "Pods/Target Support Files/Pods-FlickR/Pods-FlickR.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -206,6 +208,7 @@
 				EB1E9CC1222A940900F6A31F /* PhotoDownloadService.swift */,
 				EB1E9CBC222A8F9C00F6A31F /* FlickrApiService.swift */,
 				EB1E9CC3222AAC4500F6A31F /* UrlBuilder.swift */,
+				EB1E9CC7222AC11000F6A31F /* ImageCache.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -419,6 +422,7 @@
 			files = (
 				EB1E9CBD222A8F9C00F6A31F /* FlickrApiService.swift in Sources */,
 				EB1E9CA7222A5F8F00F6A31F /* PhotoCell.swift in Sources */,
+				EB1E9CC8222AC11000F6A31F /* ImageCache.swift in Sources */,
 				EB1E9C8B222A50C600F6A31F /* FlickR.xcdatamodeld in Sources */,
 				EB1E9CB9222A89AB00F6A31F /* PhotosStore.swift in Sources */,
 				EB1E9CB3222A677400F6A31F /* PhotosSection.swift in Sources */,
