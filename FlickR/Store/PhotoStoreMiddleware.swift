@@ -23,7 +23,7 @@ func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _
     return { nextDispatch in
         
         let apiService = FlickrApiServiceImpl(directDispatch: directDispatch)
-        let imageDownloadService = PhotoDownloadFlickrWebService()
+        let imageDownloadService = PhotoDownloadFlickrWebService(directDispatch: directDispatch)
         
         return {action in
             guard let state = getState() else {
@@ -31,15 +31,16 @@ func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _
             }
             
             switch action {
-            case _ as NextSearchImagesAction:
+            case let nextSearchImagesAction as NextSearchImagesAction:
                 if !state.loading { // we want to request one page in a time
                     directDispatch(LoadingStartedAction())
+                    guard !nextSearchImagesAction.initialSearch else {
+                        apiService.searchPhotos(with: state.searchString, page: 0)
+                        return
+                    }
+                    
                     apiService.searchPhotos(with: state.searchString, page: state.serverPageNum + 1)
                 }
-                break
-                
-            case let downloadAction as DownloadImageAction:
-                imageDownloadService.downloadPhoto(for: downloadAction.photo)
                 break
                 
             case let newPhotosAction as NewPhotosAction:

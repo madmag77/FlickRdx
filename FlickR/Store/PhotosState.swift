@@ -11,6 +11,7 @@ import Foundation
 let defaultSearchString = "kittens"
 
 struct MainState {
+    var choosedPhoto: Photo?
     var loading: Bool
     var serverPageNum: Int
     var searchString: String
@@ -21,13 +22,13 @@ struct PhotosState {
     var items: [Photo]
 }
 
-struct Photo {
+struct Photo: Equatable {
     let id: String
     let farm: Int
     let server: String
     let secret: String
     let title: String
-    let photoLoaded: Bool
+    var photoLoaded: Bool
 }
 
 extension Photo {
@@ -35,3 +36,4 @@ extension Photo {
         return "\(id)_\(farm)_\(server)_\(secret)"
     }
 }
+

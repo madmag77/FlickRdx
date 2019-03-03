@@ -34,13 +34,14 @@ final class PhotoCell: UICollectionViewCell {
     private func createElements() {
         let imageView = UIImageView()
         photo = imageView
-        self.addSubview(photo)
+        photo.contentMode = .scaleAspectFit
+        contentView.addSubview(photo)
         
         let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 12.0)
         title = label
-        self.addSubview(title)
+        contentView.addSubview(title)
     }
     
     private func createConstraints() {

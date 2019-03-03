@@ -19,16 +19,23 @@ protocol ConfigurablePhotoCell {
 final class PhotoViewModel {
     private var dataSource: RxCollectionViewSectionedReloadDataSource<PhotosState>?
     private var store: Store<MainState>?
+    private let photoCache: PhotoCache
     
     var photos = BehaviorRelay<[PhotosState]>(value: [PhotosState(items: [])])
 
-    init(store: Store<MainState>?) {
+    init(store: Store<MainState>?,
+         photoCache: PhotoCache = PhotoCacheInMemory.sharedInstance) {
+        
+        self.photoCache = photoCache
         self.store = store
         self.store?.subscribe(self) { subcription in
             return subcription.select { state in
                 return state.photoState
             }
         }
+        
+        // TODO: Need to change once persistence is done
+        self.store?.dispatch(NextSearchImagesAction(initialSearch: true))
     }
     
     deinit {
@@ -50,11 +57,11 @@ final class PhotoViewModel {
                 
                 cellToConfigure.configure(
                     title: ds[ip.section].items[ip.item].title,
-                    photo: PhotoCacheInMemory.sharedInstance.photo(for: item.uniqId)()
+                    photo: self.photoCache.photo(for: item.uniqId)()
                 )
                 
                 if ip.item == ds[ip.section].items.count - 1 {
-                    self.store?.dispatch(NextSearchImagesAction())
+                    self.store?.dispatch(NextSearchImagesAction(initialSearch: false))
                 }
                 
                 return cell
@@ -62,12 +69,18 @@ final class PhotoViewModel {
         
         return dataSource!
     }
+    
+    func tapOnCell(with index: Int) {
+        guard let photoToShowDetailsFor = photo(state: store?.state, index: index) else {
+            // TODO: logging?
+            return
+        }
+        store?.dispatch(ChoosePhotoForDetailsAction(photo: photoToShowDetailsFor))
+    }
 }
 
 extension PhotoViewModel: StoreSubscriber {
     func newState(state: PhotosState) {
-         DispatchQueue.main.async {
-            self.photos.accept([state])
-        }
+        self.photos.accept([state])
     }
 }

@@ -12,28 +12,33 @@ import ReSwift
 let photosStore: Store<MainState> = Store<MainState> (
     reducer: mainReducer,
     state: MainState(
+        choosedPhoto: nil,
         loading: false,
         serverPageNum: 0,
         searchString: defaultSearchString,
-        photoState: PhotosState(items: testData)
+        photoState: PhotosState(items: [])
     ),
     middleware: [printActionsMiddleware, sendServerActionsMiddleware]
 )
 
-let testData = [
-    Photo(id: "1", farm: 1, server: "1", secret: "1", title: "111", photoLoaded: false),
-    Photo(id: "2", farm: 1, server: "1", secret: "1", title: "222", photoLoaded: false),
-    Photo(id: "3", farm: 1, server: "1", secret: "1", title: "333", photoLoaded: false),
-    Photo(id: "4", farm: 1, server: "1", secret: "1", title: "444", photoLoaded: false),
-]
-
 func mainReducer(action: Action, state: MainState?) -> MainState {
     return MainState(
+        choosedPhoto: choosedPhotoReducer(action: action, state: state?.choosedPhoto),
         loading: loadingReducer(action: action, state: state?.loading),
         serverPageNum: serverPageNumReducer(action: action, state: state?.serverPageNum),
         searchString: defaultSearchString,
         photoState: photosReducer(action: action, state: state?.photoState)
     )
+}
+
+func choosedPhotoReducer(action: Action, state: Photo?) -> Photo? {
+    switch action {
+    case let choosedPhoto as ChoosePhotoForDetailsAction:
+        return choosedPhoto.photo
+    default: break
+    }
+    
+    return state
 }
 
 func serverPageNumReducer(action: Action, state: Int?) -> Int {
@@ -62,6 +67,13 @@ func photosReducer(action: Action, state: PhotosState?) -> PhotosState {
     switch action {
     case let newPhotosAction as NewPhotosAction:
         state.items.append(contentsOf: newPhotosAction.photos)
+    case let newPhotoDownloadedAction as NewPhotoDownloadedAction:
+        let uniqId = newPhotoDownloadedAction.photo.uniqId
+        if let ind = state.items.firstIndex(where: { photo in
+            return photo == newPhotoDownloadedAction.photo
+        }) {
+            state.items[ind].photoLoaded = true
+        }
     default: break
     }
     
@@ -71,10 +83,7 @@ func photosReducer(action: Action, state: PhotosState?) -> PhotosState {
 extension MainState: StateType {}
 
 struct NextSearchImagesAction: Action {
-}
-
-struct DownloadImageAction: Action {
-    let photo: Photo
+    let initialSearch: Bool
 }
 
 struct ServerErrorAction: Action {
@@ -89,4 +98,18 @@ struct LoadingCompletedAction: Action {
 
 struct NewPhotosAction: Action {
     let photos: [Photo]
+}
+
+struct NewPhotoDownloadedAction: Action {
+    let photo: Photo
+}
+
+struct ChoosePhotoForDetailsAction: Action {
+    let photo: Photo
+}
+
+func photo(state: MainState?, index: Int) -> Photo? {
+    guard let state = state, index < state.photoState.items.count else { return nil }
+    
+    return state.photoState.items[index]
 }
