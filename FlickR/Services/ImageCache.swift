@@ -26,7 +26,7 @@ class PhotoCacheInMemory {
     
     // Since a lot of images are downloading simultaneously
     // we want to make our cache threadsafe with usage of serial queue
-    private let cacheQueue = DispatchQueue(label: "CacheQueue")
+    private let cacheQueue = DispatchQueue(label: "PhotoCacheInMemoryCacheQueue")
 }
 
 extension PhotoCacheInMemory: PhotoCache {
@@ -57,11 +57,13 @@ class PhotoCacheOnDisk {
     private let folderName: String = "Flickr_images"
     private let fileManager = FileManager.default
 
+    // We want to have same cache in memory in order not to load everytime from disk
+    // TODO: Optimize inmemory storage map so it will limit the amount of images stored there
     private var imageCache: [String: UIImage] = [:]
 
     // Since a lot of images are downloading simultaneously
     // we want to make our cache threadsafe with usage of serial queue
-    private let cacheQueue = DispatchQueue(label: "CacheQueue")
+    private let cacheQueue = DispatchQueue(label: "PhotoCacheOnDiskCacheQueue")
 }
 
 extension PhotoCacheOnDisk: PhotoCache {
@@ -99,10 +101,7 @@ extension PhotoCacheOnDisk: PhotoCache {
                                                                    create: true)
                 
                 let folderURL = imageCacheDirectory.appendingPathComponent(self.folderName)
-                //var isDirectory: Bool = false
-              //  if !self.fileManager.fileExists(atPath: folderURL, isDirectory: &isDirectory) {
                 try? self.fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
-               // }
 
                 let fileURL = imageCacheDirectory.appendingPathComponent(self.folderName).appendingPathComponent(itemId)
                 
@@ -110,7 +109,7 @@ extension PhotoCacheOnDisk: PhotoCache {
                     try imageData.write(to: fileURL)
                 }
             } catch {
-                print("PhotoCacheOnDisk file saving error: ", error)
+                print("PhotoCacheOnDisk file saving error: ", error) // TODO: Log it properly
             }
         }
     }
@@ -130,7 +129,7 @@ extension PhotoCacheOnDisk: PhotoCache {
             do {
                 try self.fileManager.removeItem(at: folderURL)
             } catch {
-                print("PhotoCacheOnDisk file clearCache error: ", error)
+                print("PhotoCacheOnDisk file clearCache error: ", error) // TODO: Log it properly
             }
         }
     }

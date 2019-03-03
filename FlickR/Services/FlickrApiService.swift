@@ -53,16 +53,15 @@ class FlickrApiServiceImpl: FlickrApiService {
     }
     
     func searchPhotos(with phrase: String, page: Int) {
-        print("get page: ", page)
         guard let urlWithPhrase = URL(string: urlBuilder.url.absoluteString + "&text=" + phrase + "&page=" + String(page)) else {
-            print("search error")
+            print("search error") // TODO: change to sending Error action
             self.directDispatch?(LoadingCompletedAction())
             return
         }
         
         urlSession.dataTask(with: urlWithPhrase) { (data, response, error) in
             if let error = error {
-                print("network error: ", error)
+                print("network error: ", error) // TODO: change to sending Error action
                 self.directDispatch?(LoadingCompletedAction())
                 return
             }
@@ -70,7 +69,7 @@ class FlickrApiServiceImpl: FlickrApiService {
             // Check if server returns not 200
             guard let httpResponse: HTTPURLResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200, let data = data else {
-                    print("server error")
+                    print("server error") // TODO: change to sending Error action
                     self.directDispatch?(LoadingCompletedAction())
                     return
             }
@@ -78,7 +77,7 @@ class FlickrApiServiceImpl: FlickrApiService {
             let (parserError, photoModels) = self.parser.parseServerResponse(data: data)
             
             guard parserError == nil else {
-                print("parse error")
+                print("parse error") // TODO: change to sending Error action
                 self.directDispatch?(LoadingCompletedAction())
                 return
             }

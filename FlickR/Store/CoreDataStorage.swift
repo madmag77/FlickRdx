@@ -81,6 +81,8 @@ fileprivate func loadData(directDispatch: @escaping DispatchFunction) -> Bool {
     return emptyStorage
 }
 
+// We want to dave data in background in order don't impact user experience
+// Serial queue helps to save in strict order
 fileprivate let saveSerialQueue = DispatchQueue(label: "SaveSerialQueue")
 
 fileprivate func saveData(photos: [Photo], pageNum: Int) {
@@ -106,11 +108,14 @@ fileprivate func saveData(photos: [Photo], pageNum: Int) {
             print("CoreData saveData - Failed")
         }
         
+        // Save PageNum (in Flickr API) so next time app loads we start downloading from the proper Page
         do {
+            // Load PageNum from store first
             let requestAppParams = NSFetchRequest<NSFetchRequestResult>(entityName: "AppParams")
             requestAppParams.returnsObjectsAsFaults = false
             let resultAppParams = try context.fetch(requestAppParams) as! [NSManagedObject]
             
+            // Update or insert depends on loading result
             if resultAppParams.count > 0,
                 let _ = resultAppParams[0].value(forKey: "serverPageNum") as? Int {
                 resultAppParams[0].setValue(pageNum, forKey: "serverPageNum")
