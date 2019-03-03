@@ -53,7 +53,6 @@ fileprivate func loadData(directDispatch: @escaping DispatchFunction) -> Bool {
         
         if resultAppParams.count > 0,
             let pageNum = resultAppParams[0].value(forKey: "serverPageNum") as? Int {
-            print("PAGENUM: ", pageNum)
             directDispatch(SetSavedPageNum(pageNum: pageNum))
         }
         
