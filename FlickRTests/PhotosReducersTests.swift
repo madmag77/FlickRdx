@@ -71,5 +71,43 @@ class PhotosReducersTests: XCTestCase {
         XCTAssertFalse(newState.items[0].photoLoaded, "Reducer shouldn't update other photos properties")
         XCTAssertTrue(newState.items[1].photoLoaded, "Reducer should update PhotoLoaded property")
     }
+    
+    func testOverallErrorReducerShowError() {
+         // Given
+        let action = ErrorOccuredAction(error: ServerError())
+        let state = MainState(
+            overallError: false,
+            choosedPhoto: nil,
+            loading: false,
+            serverPageNum: 0,
+            searchString: "",
+            photoState: PhotosState(items: []))
+        
+        // When
+        let newState = errorReducer(action: action, state: state)
+        
+        // Then
+        XCTAssertTrue(newState, "Reducer should return true as there is no photo and network error occured")
+    }
+    
+    func testOverallErrorReducerDoesntShowErrorWhenThereIsStoragePhoto() {
+        // Given
+        let action = ErrorOccuredAction(error: ServerError())
+        let testPhoto =  Photo(id: "1", farm: 1, server: "1", secret: "1", title: "111", photoLoaded: false)
+        let state = MainState(
+            overallError: false,
+            choosedPhoto: nil,
+            loading: false,
+            serverPageNum: 0,
+            searchString: "",
+            photoState: PhotosState(items: [testPhoto]))
+        
+        // When
+        let newState = errorReducer(action: action, state: state)
+        
+        // Then
+        XCTAssertFalse(newState, "Reducer should return fasle as there is photo from storage")
+    }
+
 
 }

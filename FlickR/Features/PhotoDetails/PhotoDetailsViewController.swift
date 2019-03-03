@@ -26,7 +26,7 @@ final class PhotoDetailsViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        viewModel.photo.map({ image in
+        viewModel.photo.map({image in
             image == nil ? UIImage(named: "placeholder") : image
         }).bind(to: photo.rx.image).disposed(by: disposeBag)
         viewModel.photoTitle.bind(to: photoTitle.rx.text).disposed(by: disposeBag)

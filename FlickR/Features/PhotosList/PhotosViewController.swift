@@ -18,7 +18,6 @@ final class PhotosViewController: UIViewController {
     
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var loadingLabel: UILabel!
-    
     @IBOutlet weak var errorLabel: UILabel!
 
     var loadingLabelHeight: CGFloat = 0
@@ -42,9 +41,9 @@ final class PhotosViewController: UIViewController {
             })))
             .disposed(by: disposeBag)
         
-        viewModel.loading.distinctUntilChanged().subscribe { event in
-            self.loadingLabelHeight = event.element ?? false ? self.maxLoadingLabelHeight: 0
-            self.view.layoutIfNeeded()
+        viewModel.loading.distinctUntilChanged().subscribe {[weak self] event in
+            self?.loadingLabelHeight = event.element ?? false ? (self?.maxLoadingLabelHeight ?? 0): 0
+            self?.view.layoutIfNeeded()
         }.disposed(by: disposeBag)
         
         viewModel.overallError.distinctUntilChanged().map({!$0}).bind(to: errorLabel.rx.isHidden).disposed(by: disposeBag)
@@ -169,6 +168,8 @@ fileprivate struct CollectionViewUISetup {
 
 extension PhotosViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        // TODO: Make a stream out of it
         viewModel?.tapOnCell(with: indexPath.row)
         
         // TODO: Move this to special Redux Router
