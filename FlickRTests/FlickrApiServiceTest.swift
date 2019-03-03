@@ -46,7 +46,7 @@ class FlickrApiServiceTest: XCTestCase {
         let httpStatusCode = 200
         
         urlSessionMock.dataToReturn = Data(bytes: [1,1,1])
-        urlSessionMock.urlResponseToReturn = HTTPURLResponse(url: urlBuilderMock.url, statusCode: httpStatusCode, httpVersion: "", headerFields: nil)
+        urlSessionMock.urlResponseToReturn = HTTPURLResponse(url: mockedUrl, statusCode: httpStatusCode, httpVersion: "", headerFields: nil)
         parserMock.modelsToReturn = models
         
         // When
@@ -65,7 +65,7 @@ class FlickrApiServiceTest: XCTestCase {
         let httpStatusCode = 500
         
         urlSessionMock.dataToReturn = Data(bytes: [1,1,1])
-        urlSessionMock.urlResponseToReturn = HTTPURLResponse(url: urlBuilderMock.url, statusCode: httpStatusCode, httpVersion: "", headerFields: nil)
+        urlSessionMock.urlResponseToReturn = HTTPURLResponse(url: mockedUrl, statusCode: httpStatusCode, httpVersion: "", headerFields: nil)
         parserMock.modelsToReturn = models
         
         // When

@@ -22,6 +22,7 @@ func printActionsMiddleware<T>(_ directDispatch: @escaping DispatchFunction, _ g
 func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _ getState: @escaping () -> MainState?) -> ((@escaping DispatchFunction) -> DispatchFunction) {
     return { nextDispatch in
         
+        // TODO: Use protocols here and inject implementation from outside
         let apiService = FlickrApiServiceImpl(directDispatch: directDispatch)
         let imageDownloadService = PhotoDownloadFlickrWebService(directDispatch: directDispatch)
         
@@ -47,6 +48,7 @@ func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _
                 newPhotosAction.photos.forEach({ photo in
                     imageDownloadService.downloadPhoto(for: photo)
                 })
+                directDispatch(SaveDataToPersistentStore())
                 nextDispatch(action)
                 break
 

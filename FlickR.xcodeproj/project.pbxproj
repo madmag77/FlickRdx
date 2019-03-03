@@ -37,6 +37,7 @@
 		EB1E9CD4222BCAC400F6A31F /* CommonMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CD3222BCAC400F6A31F /* CommonMocks.swift */; };
 		EB1E9CD6222BCF3400F6A31F /* PhotosReducersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CD5222BCF3400F6A31F /* PhotosReducersTests.swift */; };
 		EB1E9CD8222BD37800F6A31F /* FlickrApiServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CD7222BD37800F6A31F /* FlickrApiServiceTest.swift */; };
+		EB1E9CDA222BF34000F6A31F /* CoreDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E9CD9222BF34000F6A31F /* CoreDataStorage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		EB1E9CD3222BCAC400F6A31F /* CommonMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonMocks.swift; sourceTree = "<group>"; };
 		EB1E9CD5222BCF3400F6A31F /* PhotosReducersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosReducersTests.swift; sourceTree = "<group>"; };
 		EB1E9CD7222BD37800F6A31F /* FlickrApiServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickrApiServiceTest.swift; sourceTree = "<group>"; };
+		EB1E9CD9222BF34000F6A31F /* CoreDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStorage.swift; sourceTree = "<group>"; };
 		F92CD3C3E609DA60128CDE70 /* Pods-FlickR.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlickR.release.xcconfig"; path = "Pods/Target Support Files/Pods-FlickR/Pods-FlickR.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,11 +157,11 @@
 			children = (
 				EB1E9CCC222B577500F6A31F /* Features */,
 				EB1E9CBA222A89B600F6A31F /* Common */,
-				EB1E9C82222A50C600F6A31F /* AppDelegate.swift */,
 				EB1E9CAB222A63E400F6A31F /* Misc */,
-				EB1E9C89222A50C600F6A31F /* FlickR.xcdatamodeld */,
 				EB1E9CBB222A89D000F6A31F /* Store */,
 				EB1E9CBE222A8FA900F6A31F /* Services */,
+				EB1E9C82222A50C600F6A31F /* AppDelegate.swift */,
+				EB1E9C89222A50C600F6A31F /* FlickR.xcdatamodeld */,
 			);
 			path = FlickR;
 			sourceTree = "<group>";
@@ -215,6 +217,7 @@
 				EB1E9CB0222A66D900F6A31F /* PhotosState.swift */,
 				EB1E9CB8222A89AB00F6A31F /* PhotosStore.swift */,
 				EB1E9CC5222ABEFB00F6A31F /* PhotoStoreMiddleware.swift */,
+				EB1E9CD9222BF34000F6A31F /* CoreDataStorage.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -457,6 +460,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB1E9CDA222BF34000F6A31F /* CoreDataStorage.swift in Sources */,
 				EB1E9CBD222A8F9C00F6A31F /* FlickrApiService.swift in Sources */,
 				EB1E9CA7222A5F8F00F6A31F /* PhotoCell.swift in Sources */,
 				EB1E9CD0222B58C400F6A31F /* PhotoDetailsViewModel.swift in Sources */,

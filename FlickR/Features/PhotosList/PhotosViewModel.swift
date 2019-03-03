@@ -34,8 +34,7 @@ final class PhotoViewModel {
             }
         }
         
-        // TODO: Need to change once persistence is done
-        self.store?.dispatch(NextSearchImagesAction(initialSearch: true))
+        self.store?.dispatch(LoadDataFromPersistentStore())
     }
     
     deinit {

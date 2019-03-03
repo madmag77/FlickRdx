@@ -18,8 +18,12 @@ let photosStore: Store<MainState> = Store<MainState> (
         searchString: defaultSearchString,
         photoState: PhotosState(items: [])
     ),
-    middleware: [printActionsMiddleware, sendServerActionsMiddleware]
+    middleware: [printActionsMiddleware,
+                 sendServerActionsMiddleware,
+                 persistenceMiddleware]
 )
+
+// MARK: - Reducers
 
 func mainReducer(action: Action, state: MainState?) -> MainState {
     return MainState(
@@ -68,7 +72,6 @@ func photosReducer(action: Action, state: PhotosState?) -> PhotosState {
     case let newPhotosAction as NewPhotosAction:
         state.items.append(contentsOf: newPhotosAction.photos)
     case let newPhotoDownloadedAction as NewPhotoDownloadedAction:
-        let uniqId = newPhotoDownloadedAction.photo.uniqId
         if let ind = state.items.firstIndex(where: { photo in
             return photo == newPhotoDownloadedAction.photo
         }) {
@@ -81,6 +84,8 @@ func photosReducer(action: Action, state: PhotosState?) -> PhotosState {
 }
 
 extension MainState: StateType {}
+
+// MARK: - Actions
 
 struct NextSearchImagesAction: Action {
     let initialSearch: Bool
@@ -107,6 +112,15 @@ struct NewPhotoDownloadedAction: Action {
 struct ChoosePhotoForDetailsAction: Action {
     let photo: Photo
 }
+
+struct LoadDataFromPersistentStore: Action {
+}
+
+struct SaveDataToPersistentStore: Action {
+}
+
+
+// MARK: - Convenient state getters
 
 func photo(state: MainState?, index: Int) -> Photo? {
     guard let state = state, index < state.photoState.items.count else { return nil }
