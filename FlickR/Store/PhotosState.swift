@@ -11,6 +11,7 @@ import Foundation
 let defaultSearchString = "kittens"
 
 struct MainState {
+    var overallError: Bool
     var choosedPhoto: Photo?
     var loading: Bool
     var serverPageNum: Int

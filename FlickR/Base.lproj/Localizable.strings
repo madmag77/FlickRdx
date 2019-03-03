@@ -1,3 +1,5 @@
 // PhotosView
 
 "PHOTOSVIEW_TITLE" = "FlickR photos";
+"PHOTOSVIEW_LOADING" = "Loading...";
+"PHOTOSVIEW_ERROR" = "We can't show any photos at the moment as there is no connection to the Flickr server. Please check you network connection and try restart the app.";

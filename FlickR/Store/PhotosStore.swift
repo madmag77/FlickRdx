@@ -12,6 +12,7 @@ import ReSwift
 let photosStore: Store<MainState> = Store<MainState> (
     reducer: mainReducer,
     state: MainState(
+        overallError: false,
         choosedPhoto: nil,
         loading: false,
         serverPageNum: 0,
@@ -27,12 +28,26 @@ let photosStore: Store<MainState> = Store<MainState> (
 
 func mainReducer(action: Action, state: MainState?) -> MainState {
     return MainState(
+        overallError: errorReducer(action: action, state: state),
         choosedPhoto: choosedPhotoReducer(action: action, state: state?.choosedPhoto),
         loading: loadingReducer(action: action, state: state?.loading),
         serverPageNum: serverPageNumReducer(action: action, state: state?.serverPageNum),
         searchString: defaultSearchString,
         photoState: photosReducer(action: action, state: state?.photoState)
     )
+}
+
+func errorReducer(action: Action, state: MainState?) -> Bool {
+    switch action {
+    case let errorAction as ErrorOccuredAction:
+        return errorAction.error != nil && (state?.photoState.items.count ?? 0) == 0
+     case _ as NewPhotosAction:
+        return false
+    default: break
+    }
+    
+    return state?.overallError ?? false
+
 }
 
 func choosedPhotoReducer(action: Action, state: Photo?) -> Photo? {
@@ -125,6 +140,10 @@ struct SaveDataToPersistentStore: Action {
 
 struct SetSavedPageNum: Action {
     let pageNum: Int
+}
+
+struct ErrorOccuredAction: Action {
+    let error: Error?
 }
 
 // MARK: - Convenient state getters

@@ -62,7 +62,12 @@ class FlickrApiServiceImpl: FlickrApiService {
         urlSession.dataTask(with: urlWithPhrase) { (data, response, error) in
             if let error = error {
                 print("network error: ", error) // TODO: change to sending Error action
-                self.directDispatch?(LoadingCompletedAction())
+                
+                // TODO: remove this workaround (it was done to make error determination slower)
+                DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.directDispatch?(ErrorOccuredAction(error: error))
+                    self.directDispatch?(LoadingCompletedAction())
+                })
                 return
             }
             

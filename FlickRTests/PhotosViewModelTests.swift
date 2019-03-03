@@ -125,6 +125,7 @@ class PhotosViewModelTests: XCTestCase {
         let photos = [testPhoto, anotherTestPhoto]
         redux = MockRedux()
         redux.defaultState = MainState(
+            overallError: false,
             choosedPhoto: nil,
             loading: false,
             serverPageNum: 0,

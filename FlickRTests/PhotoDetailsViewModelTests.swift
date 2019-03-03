@@ -25,6 +25,7 @@ class PhotoDetailsViewModelTests: XCTestCase {
     override func setUp() {
         redux = MockRedux()
         redux.defaultState = MainState(
+            overallError: false,
             choosedPhoto: testPhoto,
             loading: false,
             serverPageNum: 0,

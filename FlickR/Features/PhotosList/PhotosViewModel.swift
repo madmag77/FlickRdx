@@ -22,6 +22,8 @@ final class PhotoViewModel {
     private let photoCache: PhotoCache
     
     var photos = BehaviorRelay<[PhotosState]>(value: [PhotosState(items: [])])
+    var loading = BehaviorRelay<Bool>(value: false)
+    var overallError = BehaviorRelay<Bool>(value: false)
 
     init(store: Store<MainState>?,
          photoCache: PhotoCache = defaultCacheToUse) {
@@ -30,7 +32,7 @@ final class PhotoViewModel {
         self.store = store
         self.store?.subscribe(self) { subcription in
             return subcription.select { state in
-                return state.photoState
+                return state
             }
         }
         
@@ -79,9 +81,11 @@ final class PhotoViewModel {
 }
 
 extension PhotoViewModel: StoreSubscriber {
-    func newState(state: PhotosState) {
+    func newState(state: MainState) {
         DispatchQueue.main.async {
-            self.photos.accept([state])
+            self.photos.accept([state.photoState])
+            self.loading.accept(state.loading)
+            self.overallError.accept(state.overallError)
         }
     }
 }

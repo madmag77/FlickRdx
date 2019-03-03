@@ -29,6 +29,7 @@ class MockRedux {
     var lastAction: Action?
     
     var defaultState = MainState(
+        overallError: false,
         choosedPhoto: nil,
         loading: false,
         serverPageNum: 0,
@@ -46,6 +47,7 @@ class MockRedux {
         return { (action: Action, state: MainState?) -> MainState in
             self.lastAction = action
             return state ?? MainState(
+                overallError: false,
                 choosedPhoto: nil,
                 loading: false,
                 serverPageNum: 0,

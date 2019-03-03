@@ -11,13 +11,17 @@ import SnapKit
 import RxSwift
 
 final class PhotosViewController: UIViewController {
-    private let loadingLabelHeight: CGFloat = 21
+    private let maxLoadingLabelHeight: CGFloat = 50
     private let collectionViewInset: CGFloat = 1
     
     private let disposeBag = DisposeBag()
     
     @IBOutlet weak var photoCollectionView: UICollectionView!
+    @IBOutlet weak var loadingLabel: UILabel!
     
+    @IBOutlet weak var errorLabel: UILabel!
+
+    var loadingLabelHeight: CGFloat = 0
     var viewModel: PhotoViewModel!
     
     override func viewDidLoad() {
@@ -38,22 +42,44 @@ final class PhotosViewController: UIViewController {
             })))
             .disposed(by: disposeBag)
         
+        viewModel.loading.distinctUntilChanged().subscribe { event in
+            self.loadingLabelHeight = event.element ?? false ? self.maxLoadingLabelHeight: 0
+            self.view.layoutIfNeeded()
+        }.disposed(by: disposeBag)
+        
+        viewModel.overallError.distinctUntilChanged().map({!$0}).bind(to: errorLabel.rx.isHidden).disposed(by: disposeBag)
+        
         photoCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
      }
     
     override func updateViewConstraints() {
+        loadingLabel.snp.updateConstraints { (make) -> Void in
+            make.left.equalTo(self.view).offset(collectionViewInset)
+            make.right.equalTo(self.view).offset(-collectionViewInset)
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(collectionViewInset)
+            } else {
+                make.top.equalTo(view).offset(collectionViewInset)
+            }
+            make.height.equalTo(loadingLabelHeight)
+        }
+        
         photoCollectionView.snp.updateConstraints { (make) -> Void in
             make.left.equalTo(self.view).offset(collectionViewInset)
             make.right.equalTo(self.view).offset(-collectionViewInset)
             
             if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(collectionViewInset)
-                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-collectionViewInset)
+                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(collectionViewInset)
             } else {
-                make.top.equalTo(view).offset(collectionViewInset)
-                make.bottom.equalTo(view).offset(-collectionViewInset)
+                make.bottom.equalTo(view).offset(collectionViewInset)
             }
+            
+            make.top.equalTo(loadingLabel.snp.bottom).offset(-collectionViewInset)
+        }
+        
+        errorLabel.snp.makeConstraints { (make) -> Void in
+            make.center.equalTo(view)
         }
 
         super.updateViewConstraints()
@@ -75,20 +101,55 @@ final class PhotosViewController: UIViewController {
         photoCollectionView = collectionView
         photoCollectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.reusableIdentifier)
         view.addSubview(photoCollectionView)
+        
+        var label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 15.0)
+        label.textColor = UIColor.blue
+        label.text = localize("PHOTOSVIEW_LOADING")
+        loadingLabel = label
+        view.addSubview(loadingLabel)
+        
+        label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 25.0)
+        label.numberOfLines = -1
+        label.textColor = UIColor.blue
+        label.text = localize("PHOTOSVIEW_ERROR")
+        errorLabel = label
+        view.addSubview(errorLabel)
      }
 
     private func createConstraints() {
+        loadingLabel.snp.makeConstraints { (make) -> Void in
+            make.left.equalTo(self.view).offset(collectionViewInset)
+            make.right.equalTo(self.view).offset(-collectionViewInset)
+            if #available(iOS 11.0, *) {
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(collectionViewInset)
+            } else {
+                make.top.equalTo(view).offset(collectionViewInset)
+            }
+            make.height.equalTo(0)
+        }
+
         photoCollectionView.snp.makeConstraints { (make) -> Void in
             make.left.equalTo(self.view).offset(collectionViewInset)
             make.right.equalTo(self.view).offset(-collectionViewInset)
             
             if #available(iOS 11.0, *) {
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(collectionViewInset)
-                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-collectionViewInset)
+                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(collectionViewInset)
             } else {
-                make.top.equalTo(view).offset(collectionViewInset)
-                make.bottom.equalTo(view).offset(-collectionViewInset)
+                make.bottom.equalTo(view).offset(collectionViewInset)
             }
+            
+            make.top.equalTo(loadingLabel.snp.bottom).offset(-collectionViewInset)
+        }
+        
+        errorLabel.snp.makeConstraints { (make) -> Void in
+            make.left.equalTo(self.view).offset(collectionViewInset)
+            make.right.equalTo(self.view).offset(-collectionViewInset)
+            make.centerY.equalTo(view)
+            make.height.equalTo(300)
         }
     }
 }
