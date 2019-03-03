@@ -26,8 +26,8 @@ func persistenceMiddleware(_ directDispatch: @escaping DispatchFunction, _ getSt
                     }
                 break
                 
-            case _ as SaveDataToPersistentStore:
-                saveData(state: state)
+            case let saveAction as SaveDataToPersistentStore:
+                saveData(photos: saveAction.photos, pageNum: state.serverPageNum + 1)
                 break
                 
             default:
@@ -44,7 +44,19 @@ fileprivate func loadData(directDispatch: @escaping DispatchFunction) -> Bool {
     request.returnsObjectsAsFaults = false
     var emptyStorage = true
     
+    let requestAppParams = NSFetchRequest<NSFetchRequestResult>(entityName: "AppParams")
+    requestAppParams.returnsObjectsAsFaults = false
+   
+    
     do {
+        let resultAppParams = try context.fetch(requestAppParams) as! [NSManagedObject]
+        
+        if resultAppParams.count > 0,
+            let pageNum = resultAppParams[0].value(forKey: "serverPageNum") as? Int {
+            print("PAGENUM: ", pageNum)
+            directDispatch(SetSavedPageNum(pageNum: pageNum))
+        }
+        
         let result = try context.fetch(request) as! [NSManagedObject]
         
         let photoModels = result.map({ (entity: NSManagedObject) -> (Photo) in
@@ -57,39 +69,63 @@ fileprivate func loadData(directDispatch: @escaping DispatchFunction) -> Bool {
         })
         
         emptyStorage = photoModels.isEmpty
-        
-        directDispatch(NewPhotosAction(photos: photoModels))
+    
+        directDispatch(NewPhotosAction(photos: photoModels, downloadImages: false))
         
     } catch {
-        print("Failed")
+        // TODO: publish Error Action
+        print("CoreData loadData - Failed")
     }
     directDispatch(LoadingCompletedAction())
     
     return emptyStorage
 }
 
-fileprivate func saveData(state: MainState) {
-DispatchQueue.global(qos: .userInitiated).async {
-    let context = persistentContainer.viewContext
-    let entity = NSEntityDescription.entity(forEntityName: "PhotoEntity", in: context)
-   
-    state.photoState.items.forEach({ photo in
-        let newEntity = NSManagedObject(entity: entity!, insertInto: context)
+fileprivate let saveSerialQueue = DispatchQueue(label: "SaveSerialQueue")
 
-        newEntity.setValue(photo.id, forKey: "id")
-        newEntity.setValue(photo.farm, forKey: "farm")
-        newEntity.setValue(photo.server, forKey: "server")
-        newEntity.setValue(photo.secret, forKey: "secret")
-        newEntity.setValue(photo.title, forKey: "title")
-        newEntity.setValue(photo.photoLoaded, forKey: "photoLoaded")
-    })
-    
-    do {
-        try context.save()
-    } catch {
-        print("Failed saving")
+fileprivate func saveData(photos: [Photo], pageNum: Int) {
+    saveSerialQueue.async {
+        let context = persistentContainer.newBackgroundContext()
+        let entity = NSEntityDescription.entity(forEntityName: "PhotoEntity", in: context)
+        
+        photos.forEach({ photo in
+            let newEntity = NSManagedObject(entity: entity!, insertInto: context)
+            
+            newEntity.setValue(photo.id, forKey: "id")
+            newEntity.setValue(photo.farm, forKey: "farm")
+            newEntity.setValue(photo.server, forKey: "server")
+            newEntity.setValue(photo.secret, forKey: "secret")
+            newEntity.setValue(photo.title, forKey: "title")
+            newEntity.setValue(photo.photoLoaded, forKey: "photoLoaded")
+        })
+        
+        do {
+            try context.save()
+        } catch {
+            // TODO: publish Error Action
+            print("CoreData saveData - Failed")
+        }
+        
+        do {
+            let requestAppParams = NSFetchRequest<NSFetchRequestResult>(entityName: "AppParams")
+            requestAppParams.returnsObjectsAsFaults = false
+            let resultAppParams = try context.fetch(requestAppParams) as! [NSManagedObject]
+            
+            if resultAppParams.count > 0,
+                let _ = resultAppParams[0].value(forKey: "serverPageNum") as? Int {
+                resultAppParams[0].setValue(pageNum, forKey: "serverPageNum")
+            } else {
+                let appParams = NSEntityDescription.entity(forEntityName: "AppParams", in: context)
+                let pageNumEntity = NSManagedObject(entity: appParams!, insertInto: context)
+                pageNumEntity.setValue(pageNum, forKey: "serverPageNum")
+            }
+            
+            try context.save()
+        } catch {
+            // TODO: publish Error Action
+            print("CoreData saveData - Failed")
+        }
     }
-}
 }
 
 

@@ -53,6 +53,7 @@ class FlickrApiServiceImpl: FlickrApiService {
     }
     
     func searchPhotos(with phrase: String, page: Int) {
+        print("get page: ", page)
         guard let urlWithPhrase = URL(string: urlBuilder.url.absoluteString + "&text=" + phrase + "&page=" + String(page)) else {
             print("search error")
             self.directDispatch?(LoadingCompletedAction())
@@ -61,7 +62,7 @@ class FlickrApiServiceImpl: FlickrApiService {
         
         urlSession.dataTask(with: urlWithPhrase) { (data, response, error) in
             if let error = error {
-                print("network error")
+                print("network error: ", error)
                 self.directDispatch?(LoadingCompletedAction())
                 return
             }
@@ -82,7 +83,7 @@ class FlickrApiServiceImpl: FlickrApiService {
                 return
             }
             
-            self.directDispatch?(NewPhotosAction(photos: photoModels))
+            self.directDispatch?(NewPhotosAction(photos: photoModels, downloadImages: true))
             self.directDispatch?(LoadingCompletedAction())
         }.resume()
     }

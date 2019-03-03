@@ -19,7 +19,7 @@ final class PhotoDetailsViewModel {
         photoCache.photo(for: store?.state.choosedPhoto?.uniqId ?? "")())
 
     init(store: Store<MainState>?,
-         photoCache: PhotoCache = PhotoCacheInMemory.sharedInstance) {
+         photoCache: PhotoCache = defaultCacheToUse) {
         self.photoCache = photoCache
         self.store = store
     }

@@ -56,6 +56,8 @@ class MockRedux {
 }
 
 class PhotoCacheMock: PhotoCache {
+    static var sharedInstance: PhotoCache = PhotoCacheMock()
+    
     var photoToReturn: UIImage?
     var setItemIdWasSet: String?
     var getItemIdWasSet: String?

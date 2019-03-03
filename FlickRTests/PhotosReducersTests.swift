@@ -14,14 +14,14 @@ import ReSwift
 class PhotosReducersTests: XCTestCase {
     func testServerPageNumIncrementReducer() {
         // Given
-        let action = NewPhotosAction(photos: [])
+        let action = NewPhotosAction(photos: [], downloadImages: true)
         let state = 0
         
         // When
         let newState = serverPageNumReducer(action: action, state: state)
         
         // Then
-        XCTAssertEqual(newState, state + 1, "Reducer should increment currentPage once newPhotosAction comes from service")
+        XCTAssertEqual(newState, state + 1, "Reducer should increment currentPage once newPhotosAction comes from service with attribute downloadImages = TRUE")
     }
     
     func testLoadingStateReducer() {
@@ -46,7 +46,7 @@ class PhotosReducersTests: XCTestCase {
     func testPhotosReducerAddedNewPhotos() {
         // Given
         let testPhoto = Photo(id: "1", farm: 1, server: "1", secret: "1", title: "111", photoLoaded: false)
-        let action = NewPhotosAction(photos: [testPhoto])
+        let action = NewPhotosAction(photos: [testPhoto], downloadImages: false)
         let state = PhotosState(items: [])
         
         // When

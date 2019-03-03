@@ -24,7 +24,7 @@ final class PhotoViewModel {
     var photos = BehaviorRelay<[PhotosState]>(value: [PhotosState(items: [])])
 
     init(store: Store<MainState>?,
-         photoCache: PhotoCache = PhotoCacheInMemory.sharedInstance) {
+         photoCache: PhotoCache = defaultCacheToUse) {
         
         self.photoCache = photoCache
         self.store = store
@@ -55,7 +55,7 @@ final class PhotoViewModel {
                 }
                 
                 cellToConfigure.configure(
-                    title: ds[ip.section].items[ip.item].title,
+                    title: item.title,
                     photo: self.photoCache.photo(for: item.uniqId)()
                 )
                 
@@ -80,6 +80,8 @@ final class PhotoViewModel {
 
 extension PhotoViewModel: StoreSubscriber {
     func newState(state: PhotosState) {
-        self.photos.accept([state])
+        DispatchQueue.main.async {
+            self.photos.accept([state])
+        }
     }
 }

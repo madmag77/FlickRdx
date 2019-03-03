@@ -49,8 +49,10 @@ func serverPageNumReducer(action: Action, state: Int?) -> Int {
     let state = state ?? 0
     
     switch action {
-    case _ as NewPhotosAction:
-        return state + 1
+    case let newPhotosAction as NewPhotosAction:
+        return newPhotosAction.downloadImages ? state + 1 :  state
+    case let setSavedPageNum as SetSavedPageNum:
+        return setSavedPageNum.pageNum
     default: break
     }
     
@@ -61,7 +63,7 @@ func loadingReducer(action: Action, state: Bool?) -> Bool {
     switch action {
     case _ as LoadingStartedAction: return true
     case _ as LoadingCompletedAction: return false
-    default: return false
+    default: return state ?? false
     }
 }
 
@@ -103,6 +105,7 @@ struct LoadingCompletedAction: Action {
 
 struct NewPhotosAction: Action {
     let photos: [Photo]
+    let downloadImages: Bool
 }
 
 struct NewPhotoDownloadedAction: Action {
@@ -117,8 +120,12 @@ struct LoadDataFromPersistentStore: Action {
 }
 
 struct SaveDataToPersistentStore: Action {
+    let photos: [Photo]
 }
 
+struct SetSavedPageNum: Action {
+    let pageNum: Int
+}
 
 // MARK: - Convenient state getters
 

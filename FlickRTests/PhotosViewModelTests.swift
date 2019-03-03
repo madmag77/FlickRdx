@@ -74,9 +74,9 @@ class PhotosViewModelTests: XCTestCase {
         
         // When
         // Simulate receiving of Photo
-       var tempArr = self.viewModel.photos.value
+        var tempArr = viewModel.photos.value
         tempArr[0].items.append(anotherTestPhoto)
-        viewModel.newState(state: tempArr[0])
+        viewModel.photos.accept(tempArr)
 
         let itemsCount = datasource.collectionView(collectionView, numberOfItemsInSection: 0)
         _ = datasource.collectionView(collectionView, cellForItemAt: IndexPath(row: 1, section: 0))
@@ -102,14 +102,13 @@ class PhotosViewModelTests: XCTestCase {
         // Simulate receiving of Photo
         var tempArr = self.viewModel.photos.value
         tempArr[0].items.append(anotherTestPhoto)
-        viewModel.newState(state: tempArr[0])
+        viewModel.photos.accept(tempArr)
         
         // When
         _ = datasource.collectionView(collectionView, cellForItemAt: IndexPath(row: 0, section: 0))
         
         // Then
-         XCTAssertTrue(redux.lastAction is NextSearchImagesAction, "Have to trigger Next page call with special flag at the start of app")
-        XCTAssertTrue((redux.lastAction as! NextSearchImagesAction).initialSearch, "Have to trigger Next page call with special flag at the start of app")
+         XCTAssertTrue(redux.lastAction is LoadDataFromPersistentStore, "Have to trigger LoadDataFromPersistentStore at the start of app")
         
         // When
         _ = datasource.collectionView(collectionView, cellForItemAt: IndexPath(row: 1, section: 0))

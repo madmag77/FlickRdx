@@ -9,13 +9,14 @@
 import UIKit
 
 protocol PhotoCache {
+    static var sharedInstance: PhotoCache { get }
     func photo(for itemId: String) -> () -> UIImage?
     func setPhoto(_ image: UIImage, for itemId: String)
     func clearCache()
 }
 
 class PhotoCacheInMemory {
-    static let sharedInstance: PhotoCacheInMemory = PhotoCacheInMemory()
+    static let sharedInstance: PhotoCache = PhotoCacheInMemory()
     
     // Sure thing it's not good to store maybe thousands of images in memory
     // so memory cache should be limited, and persistent file cache introduced
@@ -50,3 +51,89 @@ extension PhotoCacheInMemory: PhotoCache {
     }
 }
 
+class PhotoCacheOnDisk {
+    static let sharedInstance: PhotoCache = PhotoCacheOnDisk()
+    
+    private let folderName: String = "Flickr_images"
+    private let fileManager = FileManager.default
+
+    private var imageCache: [String: UIImage] = [:]
+
+    // Since a lot of images are downloading simultaneously
+    // we want to make our cache threadsafe with usage of serial queue
+    private let cacheQueue = DispatchQueue(label: "CacheQueue")
+}
+
+extension PhotoCacheOnDisk: PhotoCache {
+    func photo(for itemId: String) -> () -> UIImage? {
+        return {
+            self.cacheQueue.sync {
+                if let image = self.imageCache[itemId] {
+                    return image
+                }
+                
+                guard let imageCacheDirectory = try? self.fileManager.url(for: .cachesDirectory,
+                                                                   in: .userDomainMask,
+                                                                   appropriateFor: nil,
+                                                                   create: true),
+                    let data = try? Data(contentsOf: imageCacheDirectory.appendingPathComponent(self.folderName).appendingPathComponent(itemId)) else {
+                        
+                        return nil
+                }
+                
+                let image = UIImage(data: data)
+                self.imageCache[itemId] = image
+                
+                return image
+            }
+        }
+    }
+    
+    func setPhoto(_ image: UIImage, for itemId: String) {
+        cacheQueue.async {
+            self.imageCache[itemId] = image
+            do {
+                let imageCacheDirectory = try self.fileManager.url(for: .cachesDirectory,
+                                                                   in: .userDomainMask,
+                                                                   appropriateFor: nil,
+                                                                   create: true)
+                
+                let folderURL = imageCacheDirectory.appendingPathComponent(self.folderName)
+                //var isDirectory: Bool = false
+              //  if !self.fileManager.fileExists(atPath: folderURL, isDirectory: &isDirectory) {
+                try? self.fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+               // }
+
+                let fileURL = imageCacheDirectory.appendingPathComponent(self.folderName).appendingPathComponent(itemId)
+                
+                if let imageData = image.jpegData(compressionQuality: 1.0) {
+                    try imageData.write(to: fileURL)
+                }
+            } catch {
+                print("PhotoCacheOnDisk file saving error: ", error)
+            }
+        }
+    }
+    
+    func clearCache() {
+        cacheQueue.async {
+            guard let imageCacheDirectory = try? self.fileManager.url(for: .cachesDirectory,
+                                                                      in: .userDomainMask,
+                                                                      appropriateFor: nil,
+                                                                      create: true)
+                else {
+                                                                return
+            }
+            
+            let folderURL = imageCacheDirectory.appendingPathComponent(self.folderName)
+            
+            do {
+                try self.fileManager.removeItem(at: folderURL)
+            } catch {
+                print("PhotoCacheOnDisk file clearCache error: ", error)
+            }
+        }
+    }
+}
+
+let defaultCacheToUse: PhotoCache = PhotoCacheOnDisk.sharedInstance

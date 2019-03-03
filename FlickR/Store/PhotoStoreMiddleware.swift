@@ -10,10 +10,9 @@ import Foundation
 import ReSwift
 
 func printActionsMiddleware<T>(_ directDispatch: @escaping DispatchFunction, _ getState: @escaping () -> T?) -> ((@escaping DispatchFunction) -> DispatchFunction) {
-    let t: T? = nil
     return { nextDispatch in
         return {action in
-            print("\(type(of: t)): \(type(of: action))")
+            print("\(type(of: action))")
             nextDispatch(action)
         }
     }
@@ -45,10 +44,14 @@ func sendServerActionsMiddleware(_ directDispatch: @escaping DispatchFunction, _
                 break
                 
             case let newPhotosAction as NewPhotosAction:
-                newPhotosAction.photos.forEach({ photo in
-                    imageDownloadService.downloadPhoto(for: photo)
-                })
-                directDispatch(SaveDataToPersistentStore())
+                if newPhotosAction.downloadImages {
+                    DispatchQueue.global(qos: .default).async {
+                        newPhotosAction.photos.forEach({ photo in
+                            imageDownloadService.downloadPhoto(for: photo)
+                        })
+                    }
+                    directDispatch(SaveDataToPersistentStore(photos: newPhotosAction.photos))
+                }
                 nextDispatch(action)
                 break
 
